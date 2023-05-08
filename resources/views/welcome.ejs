@@ -243,6 +243,7 @@
 
     socket.on('connect', () => {
         let data = JSON.parse(localStorage.getItem('user'));
+        console.log(socket.id)
         socket.emit('online-users', { ...data, socketId: socket.id })
     });
 

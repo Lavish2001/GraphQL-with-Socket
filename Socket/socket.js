@@ -15,6 +15,14 @@ const alreadyExist = (id, username, socketId) => {
     });
     if (!data) {
         users.push({ id, username, socketId })
+    } else {
+        let index = users.findIndex((item) => {
+            return item.id === id
+        });
+        if (index != -1) {
+            users.splice(index, 1);
+            users.push({ id, username, socketId })
+        }
     }
 };
 
@@ -23,7 +31,17 @@ const findSocketId = (id) => {
         return item.id === id
     });
     if (data) {
-        return data.socketId
+        return data
+    }
+};
+
+
+const findUserWithSocketId = (id) => {
+    const data = users.find((item) => {
+        return item.socketId === id
+    });
+    if (data) {
+        return data
     }
 };
 
@@ -50,7 +68,10 @@ io.on('connection', socket => {
 
     // Online Users //
     socket.on('live-chat', async data => {
-        io.emit('send-live-chat', data);
+        let user = findSocketId(data.id);
+        let user2 = findUserWithSocketId(socket.id);
+        io.to(user.socketId).emit('send-live-chat', { 'messages': data.messages, userId: user2.id });
+        socket.emit('send-live-chat', { 'messages': data.messages, userId: user.id })
     });
 
 

@@ -255,19 +255,26 @@
 <script>
     const socket = io('http://localhost:2222');
 
+    socket.on('connect', () => {
+        let data = JSON.parse(localStorage.getItem('user'));
+        socket.emit('online-users', { ...data, socketId: socket.id })
+    });
 
     socket.on('send-live-chat', data => {
-        if (data.length > 0) {
-            const user = JSON.parse(localStorage.getItem('user'));
-            document.getElementById("message").innerHTML = `
-                        ${data.map((item) => {
-                return `
+        let receiver = JSON.parse(localStorage.getItem('liveId'));
+        if (data.userId == receiver) {
+            if (data.messages.length > 0) {
+                const user = JSON.parse(localStorage.getItem('user'));
+                document.getElementById("message").innerHTML = `
+                        ${data.messages.map((item) => {
+                    return `
                         ${item.user.id == user.id ? `<div class='outer'>  <div class="you">  <span class='y'>You</span> <p>${item.text}</p> </div> </div>` : `  <div class='otherouter'>  <div class="other"> <span class='o'>${item.user.username}</span> <p> ${item.text}</p> </div> </div>`}
                             `
-            }).join("")}
+                }).join("")}
                         `
-            const scrollingElement = (document.getElementById("message"));
-            scrollingElement.scrollTop = scrollingElement.scrollHeight;
+                const scrollingElement = (document.getElementById("message"));
+                scrollingElement.scrollTop = scrollingElement.scrollHeight;
+            }
         }
     })
 
@@ -396,7 +403,7 @@
                             }).then((res) => {
                                 if (res.ok) {
                                     res.json().then((res) => {
-                                        socket.emit('live-chat', res.data.liveMessages);
+                                        socket.emit('live-chat', { 'messages': res.data.liveMessages, 'id': JSON.parse(localStorage.getItem('liveId')) });
                                     })
                                 }
                             });
