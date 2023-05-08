@@ -1,15 +1,17 @@
-# Nodejs-Graphql-Project-
+# Nodejs-Graphql-Socket-Project-
 
-This is a Online Learning Management Sysytem which is made up on GraphQl.
+This is a GraphQl Socket Project which is made up on Node.js.
 
 
-## Why Nodejs-graphQl 🤔
+## Why Nodejs-GraphQl-Socket 🤔
 
-- GraphQL can be used with many different programming languages and platforms, and can be used in both server-side and client-side applications. It's commonly used with Node.js,  but there are also GraphQL implementations available for other languages like Python, Ruby, and Java.
+- Real-time updates: GraphQL Socket allows you to receive real-time updates from the server, without the need for constant API requests.
 
-- With GraphQL, clients can specify exactly what data they need, and the server can respond with only that data, eliminating over-fetching and under-fetching of data. This makes API responses more efficient, reducing the amount of data transferred between client and server, and improving overall performance.
+- Bidirectional communication: With GraphQL Socket, clients can send data to the server as well, enabling real-time interactions.
 
-- Overall, GraphQL provides a more efficient and flexible way to build APIs, allowing developers to focus on building applications rather than worrying about data fetching and management.
+- Efficient data transfer: GraphQL Socket enables efficient data transfer between client and server, reducing the amount of data transferred and improving overall performance.
+
+- Scalability: GraphQL Socket is highly scalable, making it ideal for applications that require real-time updates and bidirectional communication.
 
 - Git clone -> npm install -> project is ready to use. 
 
@@ -19,13 +21,13 @@ This is a Online Learning Management Sysytem which is made up on GraphQl.
 
 - Clone Nodejs-GraphQl-Project Repository
 ```bash
-    git clone https://github.com/Lavish2001/GraphQl-Basics.git
+    git clone git@github.com:Lavish2001/GraphQL-with-Socket.git
 ```
 - Install NPM packages 
 ```bash
     npm install
 ```
-- Your Backend Architecture is ready 🤙
+- Your GraphQl Socket Project is ready 🤙
 
 ## Requirements😱
 
