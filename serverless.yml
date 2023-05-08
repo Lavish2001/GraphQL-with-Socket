@@ -1,0 +1,97 @@
+service: et-tl
+provider:
+  name: aws
+  stage: live
+  region: us-east-1
+  runtime: nodejs14.x
+functions:
+  app:
+    handler: index.handler
+    events:
+      - http: ANY /
+      - http: "ANY {proxy+}"
+
+
+
+
+
+# const { createSchema, createYoga, createPubSub } = require('graphql-yoga');
+# const cors = require('cors');
+# const messages = [];
+
+
+# const yoga = createYoga({
+#     schema: createSchema({
+#         typeDefs: `
+#       type Message {
+#         id: ID!
+#         text: String!
+#         senderId: ID!
+#         receiverId: ID!
+#       }
+
+#       type Query {
+#         message(id: ID!): Message
+#         messages(senderId: ID!, receiverId: ID!): [Message]!
+#       }
+
+#       type Mutation {
+#         sendMessage(text: String!, senderId: ID!, receiverId: ID!): Message!
+#       }
+
+#       type Subscription {
+#         message(id: ID!): Message
+#         messages(senderId: ID!, receiverId: ID!): [Message]!
+#       }
+#     `,
+#         resolvers: {
+#             Query: {
+#                 message: (parent, args) => messages.find(message => message.id === args.id),
+#                 messages: (parent, args) => messages.filter(message => message.senderId === args.senderId && message.receiverId === args.receiverId),
+#             },
+#             Mutation: {
+#                 sendMessage: (parent, args) => {
+#                     const message = {
+#                         id: String(messages.length + 1),
+#                         text: args.text,
+#                         senderId: args.senderId,
+#                         receiverId: args.receiverId,
+#                     };
+#                     messages.push(message);
+#                     console.log(messages)
+#                     return message;
+#                 }
+#             },
+#             Subscription: {
+#                 submessage: {
+#                     subscribe: (parent, args, { createPubSub }) => {
+
+#                     }
+#                 }
+#             }
+#         }
+#     })
+# });
+
+# // yoga.use(cors({ origin: 'http://localhost:9000' }));
+
+
+# const { WebSocketServer } = require('ws'); // yarn add ws
+# const { useServer } = require('graphql-ws/lib/use/ws');
+# const pubSub = new createPubSub();
+# let port = 2222;
+
+# const server = new WebSocketServer({
+#     port: port,
+#     path: '/graphql',
+# });
+
+# // Add CORS middleware using the ws library's built-in middleware function
+# server.on('headers', (headers, req) => {
+#     headers.push('Access-Control-Allow-Origin: http://localhost:9000');
+#     headers.push('Access-Control-Allow-Credentials: true');
+# });
+
+# useServer(yoga, server);
+
+# console.log(`Socket server is running on port ${port}`);

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://localhost:2222/socket.io/socket.io.js"></script>
+    <title>Document</title>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #message {
+            transition: all 2s ease-in-out;
+        }
+
+        .double {
+            display: flex;
+            width: 100%;
+            justify-content: space-evenly;
+        }
+
+        .double2 {
+            display: flex;
+            flex-direction: column;
+            width: 60%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        a {
+            display: flex;
+            justify-content: center;
+            font-size: 22px;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: 900;
+            text-decoration: none;
+            width: 200px;
+            height: 16px;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        a {
+            padding: 0.5rem 1rem;
+            margin-top: 0.5rem;
+            display: flex;
+            width: 10rem;
+            justify-content: center;
+            align-items: center;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        a:hover {
+            background-color: rgb(58, 48, 48);
+            color: white;
+            transition: 0.4s;
+        }
+
+        .bidbtn {
+            padding: 0.5rem 1rem;
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 2rem;
+            width: 10rem;
+            background-color: #333;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .bidbtn:hover {
+            background-color: #f2f2f2;
+            color: black;
+            transition: 0.4s;
+            border: 1px solid black;
+        }
+
+        .makebid {
+            display: flex;
+            margin-top: 5rem;
+            flex-direction: column;
+            box-shadow: 5px 10px 26px rgba(29, 27, 27, 0.2);
+            width: 30rem;
+            height: 6rem;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+            padding: 1rem;
+        }
+
+        h3 {
+            height: 0.8rem;
+            font-size: 23px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .message {
+            display: flex;
+            padding: 1rem;
+            margin-top: 5rem;
+            flex-direction: column;
+            height: 40rem;
+            width: 50%;
+            align-items: center;
+            background-color: #f2f2f2;
+            box-shadow: 5px 10px 26px rgba(29, 27, 27, 0.2);
+            overflow-y: scroll;
+        }
+
+        .message::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        .message::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 5px;
+        }
+
+        .message::-webkit-scrollbar-thumb:hover {
+            background-color: #aaa;
+        }
+
+        .message::-webkit-scrollbar-track {
+            background-color: #f2f2f2;
+            border-radius: 5px;
+        }
+
+        input {
+            width: 20rem;
+            height: 1.6rem;
+            margin-left: 10px;
+            border-radius: 5px;
+            outline: none;
+            font-size: 20px;
+        }
+
+        .you {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 17rem;
+            background-color: rgb(79, 79, 216);
+            color: white;
+            height: auto;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+        }
+
+        .other {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 17rem;
+            background-color: rgb(236, 220, 220);
+            color: black;
+            height: auto;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+        }
+
+        .outer {
+            display: flex;
+            width: 100%;
+            height: auto;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+
+        .otherouter {
+            display: flex;
+            width: 100%;
+            height: auto;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .y {
+            display: flex;
+            width: 100%;
+            height: auto;
+            justify-content: flex-end;
+            font-size: 20px;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: 900;
+        }
+
+        .o {
+            display: flex;
+            width: 100%;
+            height: auto;
+            justify-content: flex-start;
+            font-size: 20px;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: 900;
+        }
+
+        p {
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <a id="leave" onclick="leave(event)"> Leave</a>
+    <div class="double">
+        <div class="double2">
+            <div id="message" class="message">
+
+            </div>
+            <div class="makebid">
+                <h3> <input placeholder="Write your message..." id="chat" type="text"> </input> </h3>
+                <div style="display:flex; justify-content:center;"> <button onclick="send(event)" class="bidbtn"> OK
+                    </button> </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</body>
+
+<script>
+    const socket = io('http://localhost:2222');
+
+
+    socket.on('send-live-chat', data => {
+        if (data.length > 0) {
+            const user = JSON.parse(localStorage.getItem('user'));
+            document.getElementById("message").innerHTML = `
+                        ${data.map((item) => {
+                return `
+                        ${item.user.id == user.id ? `<div class='outer'>  <div class="you">  <span class='y'>You</span> <p>${item.text}</p> </div> </div>` : `  <div class='otherouter'>  <div class="other"> <span class='o'>${item.user.username}</span> <p> ${item.text}</p> </div> </div>`}
+                            `
+            }).join("")}
+                        `
+            const scrollingElement = (document.getElementById("message"));
+            scrollingElement.scrollTop = scrollingElement.scrollHeight;
+        }
+    })
+
+    const leave = (e) => {
+        e.preventDefault();
+        localStorage.removeItem('liveId');
+        return window.location.href = "/welcome"
+    }
+
+
+    fetch('/user-live-messages', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            query: `
+            query liveMessages($user1: Int!, $user2: Int!) {
+               liveMessages(user1: $user1, user2: $user2) {
+                    id
+                    sender_id
+                    receiver_id
+                    text
+                    user{
+                        id
+                        username
+                    }
+  }
+}
+      `,
+            variables: {
+                user1: JSON.parse(localStorage.getItem('user')).id,
+                user2: JSON.parse(localStorage.getItem('liveId'))
+            }
+        })
+    }).then((res) => {
+        if (res.ok) {
+            return res.json().then((res) => {
+                if (res.data.liveMessages) {
+                    if (res.data.liveMessages.length == 0) {
+                        document.getElementById("message").innerHTML = `
+                            <h1> No Messages Found... </h1>
+                            `
+                    } else {
+                        const user = JSON.parse(localStorage.getItem('user'));
+                        document.getElementById("message").innerHTML = `
+                        ${res.data.liveMessages.map((item) => {
+                            return `
+                        ${item.user.id == user.id ? `<div class='outer'>  <div class="you">  <span class='y'>You</span> <p>${item.text}</p> </div> </div>` : `  <div class='otherouter'>  <div class="other"> <span class='o'>${item.user.username}</span> <p> ${item.text}</p> </div> </div>`}
+                            `
+                        }).join("")}
+                        `
+                        const scrollingElement = (document.getElementById("message"));
+                        scrollingElement.scrollTop = scrollingElement.scrollHeight;
+                    }
+                } else {
+                    alert('Error');
+                    localStorage.removeItem('liveId');
+                    return window.location.href = '/welcome'
+                }
+            })
+        } else {
+            alert('Error');
+            localStorage.removeItem('liveId');
+            return window.location.href = '/welcome'
+        }
+    });
+
+    const send = (e) => {
+        e.preventDefault();
+        const message = document.getElementById('chat').value;
+        document.getElementById("chat").value = "";
+        if (message) {
+            fetch('/send-messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    query: `
+                mutation sendMessage($sender_id: Int!, $receiver_id: Int!,$text: String!) {
+  sendMessage(sender_id: $sender_id, receiver_id: $receiver_id, text: $text) {
+    message{
+        status
+        message
+    }
+  }
+}
+`,
+                    variables: {
+                        sender_id: JSON.parse(localStorage.getItem('user')).id,
+                        receiver_id: JSON.parse(localStorage.getItem('liveId')),
+                        text: message
+                    }
+                })
+            }).then((res) => {
+                if (res.ok) {
+                    res.json().then((res) => {
+                        if (res.data.sendMessage.message.status == 'success') {
+
+                            fetch('/user-live-messages', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    query: `
+            query liveMessages($user1: Int!, $user2: Int!) {
+               liveMessages(user1: $user1, user2: $user2) {
+                    id
+                    sender_id
+                    receiver_id
+                    text
+                    user{
+                        id
+                        username
+                    }
+  }
+}
+`,
+                                    variables: {
+                                        user1: JSON.parse(localStorage.getItem('user')).id,
+                                        user2: JSON.parse(localStorage.getItem('liveId'))
+                                    }
+                                })
+                            }).then((res) => {
+                                if (res.ok) {
+                                    res.json().then((res) => {
+                                        socket.emit('live-chat', res.data.liveMessages);
+                                    })
+                                }
+                            });
+                        } else {
+                            alert('Error');
+                            return window.location.href = '/welcome'
+                        }
+                    })
+                } else {
+                    alert('Error');
+                    return window.location.href = '/welcome'
+                }
+            });
+        } else {
+            return alert('Message cannot be empty')
+        }
+
+    }
+
+
+</script>
+
+</html>

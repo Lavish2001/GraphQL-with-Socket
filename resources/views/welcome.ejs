@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://localhost:2222/socket.io/socket.io.js"></script>
+    <title>Document</title>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .product {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product_img {
+            width: 300px;
+            height: 400px;
+        }
+
+        .details {
+            font-size: 15px;
+        }
+
+        thead {
+            font-size: 20px;
+        }
+
+        th {
+            width: 300px;
+            height: 40px;
+            padding-bottom: 10px;
+            border: 1px solid black;
+            position: sticky;
+            top: 99px;
+            background-color: white;
+        }
+
+        td {
+            width: 300px;
+            font-size: 20px;
+            text-align: center;
+            border: 1px solid black;
+            height: 40px;
+        }
+
+        img {
+            height: 300px;
+            width: 300px;
+        }
+
+        table {
+            padding-top: 10px;
+        }
+
+        .top-div {
+            display: flex;
+            padding-left: 20px;
+            flex-direction: column;
+            width: 100%;
+            justify-content: start;
+            position: fixed;
+            top: 20px;
+        }
+
+        a {
+            display: flex;
+            justify-content: center;
+            font-size: 22px;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: 900;
+            text-decoration: none;
+            width: 200px;
+            height: 16px;
+            padding-bottom: 20px;
+        }
+
+        span {
+            font-size: 30px;
+            border: 1px solid black;
+            border-radius: 5px;
+            color: white;
+            background-color: black;
+            margin-left: 10px;
+        }
+
+        span:hover {
+            cursor: pointer;
+        }
+
+        #clear:hover {
+            cursor: pointer;
+        }
+
+        h1 {
+            font-size: 40px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        #main {
+            font-size: 20px;
+        }
+
+        .pagination {
+            display: inline-block;
+        }
+
+        h2 {
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+            display: inline-block;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        a {
+            padding: 0.5rem 1rem;
+            margin-top: 0.5rem;
+            display: flex;
+            width: 10rem;
+            justify-content: center;
+            align-items: center;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        a:hover {
+            background-color: rgb(58, 48, 48);
+            color: white;
+            transition: 0.4s;
+        }
+
+        h2:hover {
+            background-color: rgb(58, 48, 48);
+            color: white;
+            transition: 0.4s;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .user-name {
+            width: auto;
+            height: 40px;
+            padding: 5px 20px 5px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            background-color: rgb(16, 136, 16);
+            color: white;
+        }
+
+        .user-name:hover {
+            background-color: white;
+            color: rgb(16, 136, 16);
+            border: 3px solid rgb(167, 160, 160);
+            transition: 0.4s
+        }
+
+        .dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .green {
+            background-color: rgb(31, 226, 31);
+            border: none;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="top-div">
+        <a id="create"> Chats</a>
+        <a href="/change_password" id="change-password">Change Password </a>
+        <a onclick="logout(event)" id="logout">Log Out </a>
+    </div>
+    <h1 id="message">
+        Online Users...
+    </h1>
+    <div id="main">
+
+    </div>
+</body>
+
+<script>
+
+
+    const socket = io('http://localhost:2222');
+
+    socket.on('online-user-details', (data) => {
+        let user = JSON.parse(localStorage.getItem('user'));
+        let filterData = data.filter((item) => {
+            return item.id != user.id
+        });
+        if (filterData.length) {
+            document.getElementById("main").innerHTML = `
+        <ul>
+        ${filterData.map((item) => `
+            <li>
+            <a onclick="live(event,${item.id})" class="user-name">${item.username}</a>
+        </li>
+            `
+            ).join('')}
+        </ul>
+        `
+        } else {
+            document.getElementById("main").innerHTML = `
+            <h2>No Online Users Found...</h2>
+            `
+        }
+
+    });
+
+
+    socket.on('connect', () => {
+        let data = JSON.parse(localStorage.getItem('user'));
+        socket.emit('online-users', { ...data, socketId: socket.id })
+    });
+
+
+
+    // Create a WebSocket connection
+    // const ws = new WebSocket('ws://localhost:2222/graphql');
+    // ws.addEventListener('connect', event => {
+    //     console.log('Connected to socket');
+    //     ws.send('Hello Server I an Front-End and i am connected to you.')
+    // });
+
+    // ws.addEventListener('message', event => {
+    //     console.log(`This data is receivr from server : ${event}`)
+    // })
+
+
+
+    // fetch('http://localhost:2222/graphql', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //         query: `mutation {
+    //         sendMessage(text: "Hello from the frontend", senderId: 1, receiverId: 2) {
+    //             id
+    //             text
+    //             senderId
+    //             receiverId
+    //         }
+    //     }`
+    //     })
+    // })
+    //     .then(response => response.json())
+    //     .then(data => console.log(data))
+    //     .catch(error => console.log(error));
+
+
+
+
+    const logout = (e) => {
+        e.preventDefault;
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                query: `
+                {
+    logout {
+        message{
+            status,message
+        }
+    }
+}
+      `,
+            })
+        })
+            .then(res => {
+                if (res.ok) {
+                    res.json().then((res) => {
+                        if (res.data.logout.message.status == 'failed') {
+                            return alert(res.data.logout.message.message)
+                        } else {
+                            alert(res.data.logout.message.message)
+                            let data = JSON.parse(localStorage.getItem('user'));
+                            socket.emit('user-logout', data);
+                            localStorage.removeItem('user');
+                            return window.location.href = '/'
+                        }
+                    })
+                } else {
+                    return res.json().then((res) => {
+                        alert(res.errors[0].message);
+                    });
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                alert('An error occurred while logging out.');
+            });
+
+    }
+
+    const live = (e, id) => {
+        e.preventDefault();
+        let liveId = JSON.stringify(id);
+        localStorage.setItem('liveId', liveId);
+        window.location.href = '/live_chat'
+    }
+
+</script>
+
+</html>

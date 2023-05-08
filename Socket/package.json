@@ -1,0 +1,21 @@
+{
+  "name": "socket",
+  "version": "1.0.0",
+  "description": "This is graphQl socket",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon socket.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lavish",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "graphql": "^16.6.0",
+    "graphql-ws": "^5.12.1",
+    "graphql-yoga": "^3.9.1",
+    "nodemon": "^2.0.22",
+    "socket.io": "^4.6.1",
+    "ws": "^8.13.0"
+  }
+}
